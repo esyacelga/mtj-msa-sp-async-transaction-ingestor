@@ -1,0 +1,499 @@
+openapi: 3.0.0
+info:
+  title: MSA Domain - CRM - Collections Party Involvement V1
+  description: |
+    <sup>(ES)</sup>API para consulta de intervinientes en CRM (Cónyuge Deudor, Codeudor, Cónyuge Codeudor, Garante, Cónyuge Garante).<br>
+    <sup>(EN)</sup>API that allows the consultation of party involvements to CRM (Spouse Debtor, Co-debtor, Spouse Co-debtor, Guarantor, Spouse Guarantor).<br><br><br>
+    <b>• Bussines area | Área de negocio:</b> Operations <br><br>
+    <b>• Bussines domain | Dominio de negocio:</b> Collateral Administration <br><br>
+    <b>• Service domain | Dominio de servicio:</b> Collections <br><br><br>
+    <img width="200" align="left" src="https://bancopichincha-developer.apigee.io/files/Logo-Arq-de-Integracioon-BPlogo.png"/>
+  version: 1.0.0
+  contact:
+    name: Administración de Crédito - Flujos de Admisión - Yosmel Lopez Pimentel
+    email: ylopezp@pichincha.com
+externalDocs:
+  description: API Design Documentation
+  url: https://pichincha.atlassian.net/wiki/spaces/GDA/pages/2847997979/Definiciones+de+Dise+o
+servers:
+  - url: http://localhost:8080
+    description: Local
+  - url: 'https://desarrollo-flujos-admision.pichincha.com'
+    description: Develop Server Development
+  - url: 'https://test-flujos-admision.pichincha.com'
+    description: Staging Server Development
+tags:
+  - name: Party Involvement
+    description: Party Involvement Controller
+
+paths:
+  /adapter/stratio/v1/party-involvements:
+    get:
+      tags:
+        - Party Involvement
+      summary: Retrieves a list of party involvements.
+      operationId: GetPartyInvolvementByFilter
+      description: |
+        ### Details:
+        Retrieves a list of Party Involvements by partyIdentificationIdentifierValue.
+        
+        | Expected Result  | Path Parameter | Query Parameter                 |
+        | ---------------- | ------------   | -----------------------------------|
+        | Retrieves a list of Party Involvement by partyIdentificationIdentifierValue.| - | partyIdentificationIdentifierValue |
+      parameters:
+        - $ref: '#/components/parameters/partyIdentificationIdentifierValue'
+        - name: x-app
+          in: header
+          description: App where the transaction originates.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/App'
+        - name: x-guid
+          in: header
+          description: "Mechanism that allows to record and indetify a transaction from its origin to its destination. It allows to maintain traceability, it must be generated for each request."
+          required: true
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Guid'
+        - name: x-channel
+          in: header
+          description: Channel where the transaction originates.
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/Channel'
+        - name: x-medium
+          in: header
+          description: Medium where the transaction originates.
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/Medium'
+        - name: x-session
+          in: header
+          description: Active session in which the user is transacting.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Session'
+        - name: x-device
+          in: header
+          description: "Unique identifier of the device from which the request is made (Laptop, PC, smartphone, tablet, intermediate component)."
+          required: true
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/Device'
+        - name: x-device-ip
+          in: header
+          description: Public IP (IPV4 or IPV6) address of the client or server of the business or support application.
+          required: true
+          style: simple
+          explode: false
+          schema:
+            $ref: '#/components/schemas/DeviceIp'
+
+      responses:
+        "200":
+          description: |-
+            <b>`OK`</b>
+            <br><br>
+            Successful search.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GetPartyInvolvementByFilterResponse'
+              examples:
+                GetPartyInvolvementByFilterResponseExample:
+                  $ref: '#/components/examples/PartyInvolvementExample'
+
+        "400":
+          description: |-
+            <b>`Bad Request`</b><br><br>
+            The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorBadRequest'
+        "401":
+          description: |-
+            <b>`Unauthorized`</b><br><br>
+            The request requires user authentication.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorOld'
+        "403":
+          description: |-
+            <b>`Forbidden`</b><br><br>
+            The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorOld'
+        "404":
+          description: |-
+            <b>`Not Found`</b><br><br>
+            The server has not found anything matching the Request-URI.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorOld'
+        "409":
+          description: |-
+            <b>`Conflict`</b><br><br>
+            The request could not be completed due to a conflict with the current state of the resource.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorOld'
+        "429":
+          description: |-
+            <b>`Too Many Requests`</b><br><br>
+            Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorOld'
+        "500":
+          description: |-
+            <b>`Internal Server Error`</b><br><br>
+            The server encountered an unexpected condition which prevented it from fulfilling the request.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorOld'
+        "504":
+          description: |-
+            <b>`Gateway Timeout`</b><br><br>
+            The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+          content:
+            application/json;charset=UTF-8:
+              schema:
+                $ref: '#/components/schemas/ErrorOld'
+
+components:
+  parameters:
+    partyIdentificationIdentifierValue:
+      name: partyIdentificationIdentifierValue
+      in: query
+      required: true
+      schema:
+        type: string
+        description: Party Identification
+        maxLength: 13
+        pattern: "^(?:[0-9]{10}|[a-zA-Z]{3}[0-9]{6}|[0-9]{13})$"
+
+  schemas:
+    GetPartyInvolvementByFilterResponse:
+      $ref: "#/components/schemas/PartyInvolvement"
+
+    PartyInvolvement:
+      type: object
+      properties:
+        coDebtor:
+          $ref: '#/components/schemas/CoDebtor'
+        relationType:
+          $ref: '#/components/schemas/RelationType'
+        analysisDate:
+          type: string
+          description: <sup><i>(ES)</i></sup> Fecha de Análisis. \n<br><br>\n<sup><i>(EN)</i></sup> Analysis Date.
+          pattern: yyyy-MM-dd
+        originalLoanNumber:
+          type: number
+          description: <sup><i>(ES)</i></sup> Número de Préstamo Original. \n<br><br>\n<sup><i>(EN)</i></sup> Original Loan Number.
+        period:
+          type: string
+          description: <sup><i>(ES)</i></sup> Fecha del Reporte. \n<br><br>\n<sup><i>(EN)</i></sup> Report Date.
+          pattern: yyyy-MM-dd
+
+    CoDebtor:
+      type: object
+      properties:
+        identification:
+          $ref: '#/components/schemas/Identification'
+        clientCode:
+          type: string
+          description: <sup><i>(ES)</i></sup> Código de Cliente del Co-Deudor. \n<br><br>\n<sup><i>(EN)</i></sup> Customer Co-Debtor Code.
+        personName:
+          $ref: '#/components/schemas/PersonName'
+
+    Identification:
+      type: object
+      properties:
+        identifier:
+          $ref: '#/components/schemas/Identifier'
+        type:
+          $ref: '#/components/schemas/IdentificationType'
+
+    Identifier:
+      type: object
+      properties:
+        value:
+          type: string
+          description: <sup><i>(ES)</i></sup> Cédula de Identificación del Cliente. \n<br><br>\n<sup><i>(EN)</i></sup>  Customer Value Identification.
+
+    IdentificationType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: <sup><i>(ES)</i></sup> Código de Tipo de Identificación del Co-Deudor. \n<br><br>\n<sup><i>(EN)</i></sup> Co-Debtor Identification Type Code.
+        description:
+          type: string
+          description: <sup><i>(ES)</i></sup> Descripción Tipo de Identificación del Co-Deudor. \n<br><br>\n<sup><i>(EN)</i></sup> Description Type of Identification of the Co-Debtor.
+
+    PersonName:
+      type: object
+      properties:
+        name:
+          type: string
+          description: <sup><i>(ES)</i></sup> Nombre del Co-Deudor.\n<br><br>\n<sup><i>(EN)</i></sup> Co-Debtor Name.
+
+    RelationType:
+      type: object
+      properties:
+        code:
+          type: string
+          description: <sup><i>(ES)</i></sup> Código del Tipo de Relación. \n<br><br>\n<sup><i>(EN)</i></sup> Type Relationship Code.
+        description:
+          type: string
+          description: <sup><i>(ES)</i></sup> Descripción del Tipo de Relación. \n<br><br>\n<sup><i>(EN)</i></sup> Type Relationship Description.
+
+    ErrorBadRequest:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Technical error message.
+          example: Missing mandatory fields.
+        detail:
+          maximum: 50
+          type: string
+          description: Message to display to the client.
+          example: The input fields are not correct
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorListOld'
+        instance:
+          maximum: 50
+          type: string
+          description: Error catalog code.
+          example: "022"
+        type:
+          maximum: 100
+          type: string
+          description: Address where the error occurs.
+          example: /v1/name/pathSuffix
+    ErrorListOld:
+      properties:
+        message:
+          type: string
+          description: |-
+            <sup><i>(ES)</i></sup> Mensaje de error técnico.
+            <br>
+            <sup><i>(EN)</i></sup> Technical error message..
+          example: Bad Request
+        businessMessage:
+          type: string
+          description: |-
+            <sup><i>(ES)</i></sup> Mensaje de negocio.
+            <br>
+            <sup><i>(EN)</i></sup> Business message.
+          example: The xyz field is mandatory
+    ErrorOld:
+      type: object
+      properties:
+        title:
+          maximum: 50
+          type: string
+          description: Technical error message.
+          example: Missing mandatory fields.
+        detail:
+          maximum: 50
+          type: string
+          description: Message to display to the client.
+          example: The input fields are not correct
+        instance:
+          maximum: 50
+          type: string
+          description: Error catalog code.
+          example: "022"
+        type:
+          maximum: 100
+          type: string
+          description: Address where the error occurs.
+          example: /v1/name/pathSuffix
+
+    App:
+      maxLength: 5
+      minLength: 5
+      pattern: ^\d+$
+      type: string
+      nullable: false
+      example: "00738"
+    Guid:
+      maxLength: 36
+      minLength: 36
+      pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      type: string
+      example: 550e8400-e29b-41d4-a716-446655440000
+    Channel:
+      maxLength: 2
+      minLength: 2
+      pattern: ^\d+$
+      type: string
+      nullable: false
+      example: "10"
+    Medium:
+      maxLength: 6
+      minLength: 6
+      pattern: ^\d+$
+      type: string
+      example: "100002"
+    Session:
+      maxLength: 256
+      minLength: 3
+      pattern: "^[\\w\\s\\d\\/\\(\\);.,\\-\\x00-\\x7F]+$"
+      type: string
+      example: a9fd8deb-2aad-4d88-a7e3-d153c9e44b66
+    AppName:
+      maxLength: 100
+      minLength: 3
+      pattern: "^[a-zA-Z0-9\\s\\-]+$"
+      type: string
+      example: BackOffice
+    CallerName:
+      maxLength: 36
+      minLength: 36
+      pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$"
+      type: string
+      example: 01a90a3b-4db6-4897-ad28-4695d665efdd
+    RequestDate:
+      maxLength: 40
+      minLength: 20
+      pattern: "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(:\\d{2})?Z$"
+      type: string
+      example: 2019-04-29T07:20:50Z
+    Device:
+      maxLength: 1000
+      minLength: 3
+      pattern: "^[\\w\\s\\d\\/\\(\\);.,\\-\\x00-\\x7F]+$"
+      type: string
+      example: 9939aadd00ee32
+    DeviceIp:
+      maxLength: 39
+      minLength: 7
+      pattern: "^(?:(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|(?:(?:[0-9a-fA-F]{1,4}:){7}[0-9a-fA-F]{1,4}|(?=(?:[0-9a-fA-F]{0,4}:){0,7}[0-9a-fA-F]{0,4}$)(?::[0-9a-fA-F]{1,4}){1,7}))(%.+)?$"
+      type: string
+      example: 200.10.89.34
+  responses:
+    BadRequest:
+      description: |-
+        <b>`Bad Request`</b><br><br>
+        The request could not be understood by the server due to malformed syntax. The client SHOULD NOT repeat the request without modifications.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorBadRequest'
+    Unauthorized:
+      description: |-
+        <b>`Unauthorized`</b><br><br>
+        The request requires user authentication.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorOld'
+    Forbidden:
+      description: |-
+        <b>`Forbidden`</b><br><br>
+        The server understood the request, but is refusing to fulfill it. Authorization will not help and the request SHOULD NOT be repeated.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorOld'
+    NotFound:
+      description: |-
+        <b>`Not Found`</b><br><br>
+        The server has not found anything matching the Request-URI.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorOld'
+    Conflict:
+      description: |-
+        <b>`Conflict`</b><br><br>
+        The request could not be completed due to a conflict with the current state of the resource.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorOld'
+    TooManyRequests:
+      description: |-
+        <b>`Too Many Requests`</b><br><br>
+        Indicates that the user has sent too many requests in a given amount of time ("rate limiting").
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorOld'
+    InternalServerError:
+      description: |-
+        <b>`Internal Server Error`</b><br><br>
+        The server encountered an unexpected condition which prevented it from fulfilling the request.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorOld'
+    GatewayTimeout:
+      description: |-
+        <b>`Gateway Timeout`</b><br><br>
+        The server, while acting as a gateway or proxy, did not receive a timely response from the upstream server.
+      content:
+        application/json;charset=UTF-8:
+          schema:
+            $ref: '#/components/schemas/ErrorOld'
+  examples:
+    PartyInvolvementExample:
+      summary: Party Involvement
+      value:
+        - analysisDate: 2024-02-2024
+          originalLoanNumber: 4646466654646
+          coDebtor:
+            identification:
+              identifier:
+                value: 3700280708
+              type:
+                code: DEBTOR
+                description: DEUDOR
+            personName:
+              name: Lisandra Julian Montes
+            clientCode: ABF8291
+          relationType:
+            code: SP
+            description: Spouse
+          period: 2024-02-2024
+
+    BadRequestExample:
+      value:
+        title: Missing mandatory fields.
+        detail: The input fields are not correct
+        errors:
+          message: Bad Request
+          businessMessage: The xyz field is mandatory
+        instance: "022"
+        type: /v1/name/pathSuffix
+
+    ErrorExample:
+      value:
+        title: Error Title
+        detail: Error detail
+        instance: "401"
+        type: /v1/name/pathSuffix

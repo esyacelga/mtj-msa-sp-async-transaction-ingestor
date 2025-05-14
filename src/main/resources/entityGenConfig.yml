@@ -1,0 +1,9 @@
+jdbcSettings:
+  url: ""
+  username: "eyacelga"
+  password: "123456"
+  driverClassName: "org.postgresql.Driver"
+
+outputDirectory: "src/main/java"
+
+packageName: "com.pichincha."
