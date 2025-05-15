@@ -1,3 +1,8 @@
+app:
+  batch-size: 100
+  kafka:
+    topic: mtj-msa-sp-async-transaction-ingestor
+
 spring:
   application:
     name: mtj-msa-sp-async-transaction-ingestor
