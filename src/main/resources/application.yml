@@ -5,8 +5,7 @@ spring:
     channel: digital
     medium: web
  
-
-  flyway:
+    flyway:
       enabled: true
       baseline-on-migrate: true
       locations:
@@ -19,8 +18,8 @@ spring:
           "__"
   datasource:
       driver-class-name: org.postgresql.Driver
-      url: jdbc:postgresql://localhost:9999/bddmtj_msa_sp_async_transaction_ingestor
-      username: eyacelga
+      url: jdbc:postgresql://localhost:9999/bd_pichincha
+      username: postgres
       password: 123456
   jpa:
       hibernate:
