@@ -1,44 +1,35 @@
 package com.pichincha.sp.async.transaction.ingestor.infrastructure.adapter;
 
 import com.pichincha.sp.async.transaction.ingestor.application.output.port.TransactionRepositoryPort;
-import com.pichincha.sp.async.transaction.ingestor.domain.entities.Transaction;
+import com.pichincha.sp.async.transaction.ingestor.infrastructure.output.repository.TransactionRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 
 @Component
+@RequiredArgsConstructor
 public class DatabaseTransactionRepositoryAdapter implements TransactionRepositoryPort {
-    // Implementación de acceso a datos utilizando JPA o JDBC
-
-    @Override
-    public List<Transaction> findPendingTransactions() {
-        // Lógica para obtener transacciones pendientes
-        return null;
-    }
-
-    @Override
-    public void update(Transaction transaction) {
-        // Lógica para actualizar el estado de la transacción
-    }
+    private final TransactionRepository transactionRepository;
 
     @Override
     public int markNullStatusAsPending() {
-        return 0;
+        return transactionRepository.markNullStatusAsPending();
     }
 
     @Override
     public List<UUID> findPendingTransactionIdsWithLock(int limit) {
-        return List.of();
+        return transactionRepository.findPendingTransactionIdsWithLock(limit);
     }
 
     @Override
     public int markTransactionsAsProcessing(List<UUID> ids) {
-        return 0;
+        return transactionRepository.markTransactionsAsProcessing(ids);
     }
 
     @Override
     public int markTransactionsAsProcessed(List<UUID> ids) {
-        return 0;
+        return transactionRepository.markTransactionsAsProcessed(ids);
     }
 }
