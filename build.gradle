@@ -66,19 +66,17 @@ dependencies {
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 
     // Base dependencies
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'com.h2database:h2'
     implementation 'org.postgresql:postgresql:42.7.3'
-    implementation('org.springframework.boot:spring-boot-starter-webflux') {
-        exclude module: 'slf4j-simple'
-    }
 
-    // SpringDoc versión 1.7.0 compatible con requiredMode
-    implementation 'org.springdoc:springdoc-openapi-webflux-ui:1.7.0'
+    // SpringDoc (compatible con JPA)
+    implementation 'org.springdoc:springdoc-openapi-ui:1.7.0'
 
-    // Librerías adicionales
+    // Otros
     implementation 'com.pichincha:optimus-generateunittest-webflux:1.0.5'
     implementation 'commons-codec:commons-codec:1.16.0'
 
@@ -87,14 +85,10 @@ dependencies {
     implementation 'io.confluent:kafka-avro-serializer:7.6.0'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
 
-    // Optimus
-    compileOnly group: "org.projectlombok", name: "lombok", version: ""
-    implementation group: "io.r2dbc", name: "r2dbc-h2", version: "1.0.0.RELEASE"
-
     // Test
     testImplementation "org.springframework.boot:spring-boot-starter-test"
-    testImplementation "io.projectreactor:reactor-test"
     testImplementation "org.junit.jupiter:junit-jupiter-engine"
+    testImplementation "io.projectreactor:reactor-test"
     testImplementation "org.xmlunit:xmlunit-core:2.10.0"
 }
 
@@ -113,7 +107,6 @@ tasks.register('buildSpringServer', GenerateTask) {
             serializableModel                       : "true",
             dateLibrary                             : "java8",
             openApiNullable                         : "false",
-            reactive                                : "true",
             apiFirst                                : "false",
             delegatePattern                         : "false",
             configPackage                           : "${packageName}.config",
@@ -155,21 +148,8 @@ jacocoTestReport {
     reports {
         xml.required = true
         xml.destination file("$buildDir/jacoco/test.xml")
-        html.destination file("$buildDir/jacoco/index.html")
         html.required = true
+        html.destination file("$buildDir/jacoco/index.html")
         csv.required = true
-    }
-}
-
-configurations.all {
-    resolutionStrategy {
-        force 'org.springdoc:springdoc-openapi-webflux-ui:1.7.0'
-        force 'org.springdoc:springdoc-openapi-common:1.7.0'
-        force 'org.springdoc:springdoc-openapi-core:1.7.0'
-        eachDependency { DependencyResolveDetails details ->
-            if (details.requested.group == 'org.springdoc' && details.requested.name.startsWith('springdoc-openapi-starter')) {
-                details.useVersion '1.7.0'
-            }
-        }
     }
 }
