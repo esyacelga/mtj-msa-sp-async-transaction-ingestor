@@ -32,17 +32,4 @@ public class DefaultTransactionProcessor implements TransactionProcessor {
         kafkaTemplate.send(topic, eventMessage);
         log.info("Sent transaction {} to Kafka topic {}", transactionId, topic);
     }
-/*    @Override
-    public void processTransaction(UUID transactionId) {
-        Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new IllegalStateException("Transaction not found: " + transactionId));
-
-        /// kafkaTemplate.send(topic, transaction);
-        log.info("Sent transaction {} to Kafka topic {}", transactionId, topic);
-    }*/
-
-    /*@Override
-    public void processTransaction(UUID transactionId) {
-
-    }*/
 }
