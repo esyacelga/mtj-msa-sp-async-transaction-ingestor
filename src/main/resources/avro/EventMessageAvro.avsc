@@ -1,0 +1,16 @@
+{
+  "type": "record",
+  "namespace": "com.pichincha.sp.event.domain.model.event",
+  "name": "EventMessageAvro",
+  "fields": [
+    { "name": "transactionId", "type": "string" },
+    { "name": "userId", "type": "string" },
+    { "name": "amount", "type": "string" },
+    { "name": "currency", "type": "string" },
+    { "name": "status", "type": "string" },
+    { "name": "processedAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "metadata", "type": [ "null", "string" ], "default": null },
+    { "name": "createdAt", "type": { "type": "long", "logicalType": "timestamp-millis" } },
+    { "name": "updatedAt", "type": [ "null", { "type": "long", "logicalType": "timestamp-millis" } ], "default": null }
+  ]
+}

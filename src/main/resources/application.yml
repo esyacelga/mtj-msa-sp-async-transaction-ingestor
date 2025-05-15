@@ -3,13 +3,21 @@ app:
   kafka:
     topic: mtj-msa-sp-async-transaction-ingestor
 
+
+
 spring:
   application:
     name: mtj-msa-sp-async-transaction-ingestor
   header:
     channel: digital
     medium: web
-
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+    properties:
+      schema.registry.url: http://localhost:8081
   flyway:
     enabled: true
     baseline-on-migrate: true

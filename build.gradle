@@ -8,6 +8,14 @@ plugins {
     id 'org.openapi.generator' version '7.9.0'
 }
 
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    avroTools
+}
+
+
 def packageName = "com.pichincha.sp.async.transaction.ingestor"
 
 springBoot {
@@ -24,11 +32,17 @@ java {
     }
 }
 
-configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+task generateAvro(type: JavaExec) {
+    group = "build"
+    description = "Generate Java classes from Avro schemas"
+    mainClass = "org.apache.avro.tool.Main"
+    classpath = configurations.avroTools
+
+    args "compile", "schema",
+            "${projectDir}/src/main/resources/avro",
+            "${buildDir}/generated/avro"
 }
+
 
 repositories {
     mavenCentral()
@@ -81,9 +95,11 @@ dependencies {
     implementation 'commons-codec:commons-codec:1.16.0'
 
     // Kafka
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'io.confluent:kafka-avro-serializer:7.6.0'
-    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    avroTools "org.apache.avro:avro-tools:1.12.0"
+
 
     // Test
     testImplementation "org.springframework.boot:spring-boot-starter-test"
@@ -123,6 +139,7 @@ tasks.register('optimusCreateUnitTest', JavaExec) {
 }
 
 compileJava {
+    dependsOn generateAvro
     dependsOn buildSpringServer
     options.compilerArgs += [
             "-Amapstruct.suppressGeneratorTimestamp=true",
@@ -132,7 +149,7 @@ compileJava {
     ]
 }
 
-sourceSets.main.java.srcDirs = ["$buildDir/generated/src/main/java", "src/main/java"]
+sourceSets.main.java.srcDirs = ["$buildDir/generated/src/main/java", "src/main/java", "${buildDir}/generated/avro"]
 
 springBoot {
     buildInfo()
